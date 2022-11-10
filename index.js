@@ -24,6 +24,7 @@ async function run() {
 
     try {
         const servicesCollection = client.db("psychologist").collection("services")
+        const reveiwCollection = client.db("psychologist").collection("reveiw")
         app.get("/services", async (req, res) => {
             const query = {}
             const cursor = servicesCollection.find(query)
@@ -45,12 +46,25 @@ async function run() {
             res.send(services)
         })
 
+        app.get('/reveiw/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const cursor = reveiwCollection.find(query)
+            const reveiw = await cursor.toArray()
+            res.send(reveiw)
+        })
+
         app.post('/addservice', async (req, res) => {
             const service = req.body
             const result = await servicesCollection.insertOne(service)
             res.send(result)
         })
 
+        app.post("/reveiw", async (req, res) => {
+            const reveiw = req.body;
+            const result = await reveiwCollection.insertOne(reveiw)
+            res.send(result)
+        })
 
     }
 
