@@ -2,6 +2,7 @@ const express = require("express")
 const cors = require("cors")
 const port = process.env.PORT || "5000";
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { query } = require("express");
 require('dotenv').config()
 const app = express()
 
@@ -25,6 +26,7 @@ async function run() {
     try {
         const servicesCollection = client.db("psychologist").collection("services")
         const reveiwCollection = client.db("psychologist").collection("reveiw")
+        const serviceproviderCollection = client.db("psychologist").collection("serviceprovider")
         app.get("/services", async (req, res) => {
             const query = {}
             const cursor = servicesCollection.find(query)
@@ -45,10 +47,18 @@ async function run() {
             const services = await cursor.limit(3).toArray()
             res.send(services)
         })
+        app.get("/serviceProvider", async (req, res) => {
+            const query = {}
+            const cursor = serviceproviderCollection.find(query)
+            const serviceprovider = await cursor.toArray()
+            res.send(serviceprovider)
+        })
 
-        app.get('/reveiw/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) }
+        app.get('/reveiw', async (req, res) => {
+            let query = {}
+            if (req.query.serviceId) {
+                query = { serviceId: req.query.serviceId }
+            }
             const cursor = reveiwCollection.find(query)
             const reveiw = await cursor.toArray()
             res.send(reveiw)
