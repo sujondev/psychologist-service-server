@@ -63,6 +63,15 @@ async function run() {
             const reveiw = await cursor.toArray()
             res.send(reveiw)
         })
+        app.get('/myreveiws', async (req, res) => {
+            let query = {}
+            if (req.query.email) {
+                query = { email: req.query.email }
+            }
+            const cursor = reveiwCollection.find(query)
+            const myreveiw = await cursor.toArray()
+            res.send(myreveiw)
+        })
 
         app.post('/addservice', async (req, res) => {
             const service = req.body
